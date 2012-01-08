@@ -17,7 +17,7 @@ Run with a --help command line parameter to get help.
 Why?
 ----
 
-This script is intended for improving my personal convenience, as there is a lot of great music but sometimes artists do not allow neither buying or free downloads. 
+This script is intended for improving my personal convenience, as there is a lot of great music but sometimes artists do not allow neither buying nor free downloads.
 Please do not abuse this, as it might be illegal. If you can -- please buy the music, it is totally worth it.
 
 Legal

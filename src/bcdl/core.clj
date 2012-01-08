@@ -9,7 +9,7 @@
 
 (def download-save-path "./downloads")
 
-(defn save-url-content [url save-path]
+(defn save-url-content! [url save-path]
   "Downloads and saves content at `url` to `save-path`."
   (println (format "Saving %s to %s" url save-path))
   (with-open [in (io/input-stream url)
@@ -54,10 +54,9 @@
 (defn get-band-info [html]
   "Returns band data from html string. For now just the band's name as I
   have no idea how to painlessly parse underlying Javascript."
-  {:name
-    (last (re-matches
-            #"(?s)^.*var BandData = \{.*?name : \"(.*?)\".*$"
-            html))
+  {:name (last (re-matches
+                 #"(?s)^.*var BandData = \{.*?name : \"(.*?)\".*$"
+                 html))
    })
 
 (defn get-album-info [html]
@@ -82,12 +81,10 @@
                (get-track-info html))
      }))
 
-(defn add-id3-tags
-  [mp3-file & {:keys
-                [artist album year title track-number]
-                :or
-                {artist "Unknown" album "Untitled" year ""
-                 title "Untitled" track-number ""}}]
+(defn add-id3-tags!
+  [mp3-file & {:keys [artist album year title track-number]
+               :or {artist "Unknown" album "Untitled" year ""
+                    title "Untitled" track-number ""}}]
   "Adds ID3 tags to audiofile."
   (let [f (AudioFileIO/read (new java.io.File mp3-file))]
     (let [tag (.getTagOrCreateAndSetDefault f)]
@@ -98,20 +95,20 @@
       (.setField tag FieldKey/TRACK track-number)
       (.commit f))))
 
-(defn download-track [track-info album-data]
+(defn download-track! [track-info album-data]
   "Downloads the track and saves is to appropriate location,
   adding ID3 tags afterwards."
   (let [save-path (track-save-path album-data track-info)
         {album :album band :band} album-data]
-    (save-url-content (:file track-info) save-path)
-    (add-id3-tags save-path
+    (save-url-content! (:file track-info) save-path)
+    (add-id3-tags! save-path
       :artist (:name band)
       :album (:title album)
       :year (:year album)
       :title (:title track-info)
       :track-number (:number track-info))))
 
-(defn download-album [album-url]
+(defn download-album! [album-url]
   "Main function that does all the job."
   (println (format "Getting album info at %s" album-url))
   (let [album-data (get-album-data album-url)]
@@ -124,7 +121,7 @@
     (doseq [track (:tracks album-data)]
       (println (apply format "Downloading %s. %s" (map track [:number :title])))
 
-      (download-track track album-data))))
+      (download-track! track album-data))))
 
 ;;
 
@@ -133,4 +130,4 @@
   (cli/with-command-line args
     ""
     [[album-url "URL to Bandcamp album."]]
-    (download-album album-url)))
+    (download-album! album-url)))
