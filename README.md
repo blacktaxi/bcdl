@@ -7,7 +7,7 @@ Installation/Usage
 ------------------
 
 1. lein deps
-2. lein run --album-url <album URL>
+2. lein run --album-url *album URL*
 
 Usage
 -----
